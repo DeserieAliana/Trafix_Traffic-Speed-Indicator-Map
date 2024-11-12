@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trafix Traffic Speed Map - Metro Manila</title>
+  <!-- Include Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  
+  <!-- Include Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  
+  <style>
+    /* Map size */
+    #map { height: 100vh; }
+    
+    /* Style for the speed indicator popup */
+    .speed-indicator {
+      font-size: 14px;
+      font-weight: bold;
+      background-color: white;
+      padding: 5px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Title for the page -->
+  <h1 style="text-align:center; font-size: 24px;">Trafix Traffic Speed Map - Metro Manila</h1>
+  
+  <!-- Map container -->
+  <div id="map"></div>
+
+  <script>
+    // Initialize the map centered on Metro Manila coordinates
+    var map = L.map('map').setView([14.5995, 120.9842], 12);  // Coordinates for Metro Manila
+
+    // Add OpenStreetMap tile layer to the map
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Simulated traffic data (you would replace this with real-time data from an API)
+    var trafficData = [
+      { lat: 14.6100, lon: 120.9900, speed: 40, road: "Quezon Ave" },
+      { lat: 14.5672, lon: 120.9934, speed: 20, road: "EDSA" },
+      { lat: 14.5624, lon: 121.0123, speed: 60, road: "Taft Ave" },
+      { lat: 14.6190, lon: 120.9841, speed: 15, road: "Makati Ave" }
+    ];
+
+    // Function to add traffic speed indicators to the map
+    function addTrafficIndicators(data) {
+      data.forEach(function (entry) {
+        // Create a marker for each traffic data point
+        var marker = L.marker([entry.lat, entry.lon]).addTo(map);
+
+        // Display the speed information in the popup
+        marker.bindPopup('<div class="speed-indicator">' +
+          '<strong>Road: </strong>' + entry.road + '<br>' +
+          '<strong>Speed: </strong>' + entry.speed + ' km/h' +
+          '</div>');
+
+        // Customize marker color based on speed
+        var color = getSpeedColor(entry.speed);
+        marker.setIcon(L.divIcon({
+          className: 'leaflet-div-icon',
+          html: '<div style="background-color:' + color + '; width: 25px; height: 25px; border-radius: 50%;"></div>',
+          iconSize: [30, 30]
+        }));
+      });
+    }
+
+    // Function to return color based on speed
+    function getSpeedColor(speed) {
+      if (speed >= 50) {
+        return 'green'; // Green for fast traffic
+      } else if (speed >= 30) {
+        return 'orange'; // Orange for moderate traffic
+      } else {
+        return 'red'; // Red for slow traffic
+      }
+    }
+
+    // Add the traffic data (you can replace this with live API data)
+    addTrafficIndicators(trafficData);
+
+  </script>
+</body>
+</html>
